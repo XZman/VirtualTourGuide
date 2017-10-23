@@ -20,7 +20,6 @@ public class MainActivity extends Activity {
     public void startVirtualTour(View v) {
         Toast.makeText(this, "Starting Virtual Tour...", Toast.LENGTH_LONG).show();
         startActivity(new Intent(this, VRActivity.class));
-        // TO-DO: start VRActivity
     }
 
     @Override

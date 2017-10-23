@@ -9,6 +9,9 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+
+import org.placeholder.gimbalcontrol.OrientationSensor;
+
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -27,22 +30,10 @@ public class VRActivity extends Activity {
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
+        OrientationSensor.getOrientationSensor().registerSensor(this);
+
         final TextView sensorDisplayText = (TextView)findViewById(R.id.test_sensor_data);
         final TextView orientationDisplayText = (TextView)findViewById(R.id.orientation);
-
-        InetAddress address;
-        int port = 23333;
-        byte[] buf = "Hello World".getBytes();
-        try {
-            DatagramSocket socket = new DatagramSocket(port);
-            socket.setSoTimeout(5000);
-            address = InetAddress.getByName("192.168.43.136");
-            sensorDisplayText.setText(address.getHostAddress());
-            DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
-            socket.send(packet);
-        } catch (Exception e) {
-            Log.e("Exception: ", e.getMessage());
-        }
 
         mSensorListener = new SensorEventListener() {
             @Override
