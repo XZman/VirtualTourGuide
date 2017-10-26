@@ -18,56 +18,49 @@ import java.net.InetAddress;
 
 public class VRActivity extends Activity {
 
-    private SensorManager mSensorManager;
-    private Sensor mSensor;
-    private SensorEventListener mSensorListener;
+    final OrientationSensor sensor = OrientationSensor.getOrientationSensor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vr);
-
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-
-        OrientationSensor.getOrientationSensor().registerSensor(this);
+        sensor.registerSensor(this);
 
         final TextView sensorDisplayText = (TextView)findViewById(R.id.test_sensor_data);
         final TextView orientationDisplayText = (TextView)findViewById(R.id.orientation);
 
-        mSensorListener = new SensorEventListener() {
+        new Thread(new Runnable() {
             @Override
-            public void onSensorChanged(SensorEvent event) {
-                sensorDisplayText.setText("Xsin(theta/2): " + event.values[0] + "\nYsin(theta/2): " + event.values[1] + "\nZsin(theta/2): " + event.values[2] + "\ncos(theta/2): " + event.values[3]);
+            public void run() {
+                Log.i("Starting Thread: ", Thread.currentThread().getName());
+                while(true) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            orientationDisplayText.setText("\nX: " + sensor.getXDegree() + "\nY: " + sensor.getYDegree() + "\nZ: " + sensor.getZDegree());
+                        }
+                    });
 
-                float[] rotationMatrix = new float[9];
-                SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
-                float[] orien = new float[3];
-                SensorManager.getOrientation(rotationMatrix, orien);
-                float xOrien = (float)(orien[1] * 180 / Math.PI);
-                float yOrien = (float)(orien[2] * 180 / Math.PI + 90);
-                float zOrien = (float)(orien[0] * 180 / Math.PI);
-
-                orientationDisplayText.setText("\nX: " + xOrien + "\nY: " + yOrien + "\nZ: " + zOrien);
+                    try {
+                        Thread.sleep(10);
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-            }
-        };
-
-        mSensorManager.registerListener(mSensorListener, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }).start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mSensorManager.unregisterListener(mSensorListener);
+        sensor.unregisterSensor();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mSensorManager.registerListener(mSensorListener, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensor.registerSensor(this);
     }
 }

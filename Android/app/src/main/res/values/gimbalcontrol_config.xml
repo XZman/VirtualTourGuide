@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="gimbal_ip">192.168.1.233</string>
+    <string name="gimbal_ip">192.168.2.4</string>
     <integer name="gimbal_address_port">23333</integer>
     <integer name="gimbal_sendData_timeout">500</integer>
 </resources>
