@@ -2,15 +2,19 @@ package org.placeholder.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.placeholder.gimbalcontrol.OrientationSensor;
+import org.placeholder.gimbalcontrol.UDPClient;
 
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
@@ -33,7 +37,7 @@ public class VRActivity extends Activity {
             @Override
             public void run() {
                 Log.i("Starting Thread: ", Thread.currentThread().getName());
-                while(true) {
+                while (true) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -47,6 +51,29 @@ public class VRActivity extends Activity {
                     catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                }
+            }
+        }).start();
+
+        final byte[] data = new byte[5000];
+        final ImageView image = (ImageView)findViewById(R.id.image);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("Starting receive:", Thread.currentThread().getName());
+                while (true) {
+                    int length = 0;
+                    try {
+                        length = UDPClient.receiveDatagram(5657, data);
+                    }
+                    catch (Exception e) {
+                        Log.e("receiveException", e.getMessage());
+                        e.printStackTrace();
+                    }
+                    Log.i("length received", length + "");
+                    Log.i("received", new String(data, 0, length));
+//                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+//                    image.setImageBitmap(bitmap);
                 }
             }
         }).start();

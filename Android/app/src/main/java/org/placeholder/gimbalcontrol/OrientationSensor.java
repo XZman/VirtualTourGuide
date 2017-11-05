@@ -71,7 +71,7 @@ public class OrientationSensor {
                 while(true) {
                     sendOrientationData();
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(30);
                     }
                     catch (InterruptedException e) {
                         e.printStackTrace();
@@ -155,7 +155,7 @@ public class OrientationSensor {
     private void sendOrientationData() {
         byte[] orientationByte = {(byte)xOrientation, (byte)yOrientation, (byte)zOrientation};
         try {
-            UDPClient.sendDatagram("192.168.2.4", 23333, orientationByte, 500);
+            UDPClient.sendDatagram("192.168.4.1", 23333, orientationByte, 500);
         }
         catch (Exception e) {
             e.printStackTrace();
