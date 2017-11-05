@@ -3,9 +3,8 @@ package org.placeholder.gimbalcontrol;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.util.Arrays;
 
 /**
  * Created by XZman on 19/10/2017.
@@ -49,13 +48,12 @@ public class UDPClient {
         socket.send(packet);
     }
 
-    // unused
-    public static int receiveDatagram(int port, byte[] data) throws Exception {
+    public static byte[] receiveDatagram(int port, byte[] data) throws Exception {
         initSocket2(port);
 
         DatagramPacket packet = new DatagramPacket(data, data.length);
         socket2.receive(packet);
 
-        return packet.getLength();
+        return Arrays.copyOf(data, packet.getLength());
     }
 }

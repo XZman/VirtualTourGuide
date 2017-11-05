@@ -62,16 +62,16 @@ public class VRActivity extends Activity {
             public void run() {
                 Log.i("Starting receive:", Thread.currentThread().getName());
                 while (true) {
-                    int length = 0;
+                    byte[] received = null;
                     try {
-                        length = UDPClient.receiveDatagram(5657, data);
+                        received = UDPClient.receiveDatagram(5657, data);
                     }
                     catch (Exception e) {
                         Log.e("receiveException", e.getMessage());
                         e.printStackTrace();
                     }
-                    Log.i("length received", length + "");
-                    Log.i("received", new String(data, 0, length));
+                    Log.i("length received", received.length + "");
+                    Log.i("received", new String(received));
 //                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 //                    image.setImageBitmap(bitmap);
                 }
