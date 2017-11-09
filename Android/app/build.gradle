@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-    compile 'de.mrmaffen:libvlc-android:2.1.12@aar'
+    //compile 'de.mrmaffen:libvlc-android:2.1.12@aar'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {

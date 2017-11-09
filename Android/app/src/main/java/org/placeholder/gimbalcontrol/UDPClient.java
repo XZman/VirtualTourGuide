@@ -12,7 +12,10 @@ import java.util.Arrays;
 
 public class UDPClient {
 
+    // for sending packets
     private static DatagramSocket socket = null;
+
+    // for receiving packets
     private static DatagramSocket socket2 = null;
 
     private UDPClient() {

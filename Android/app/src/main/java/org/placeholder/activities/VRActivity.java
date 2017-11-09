@@ -23,6 +23,7 @@ import java.net.InetAddress;
 public class VRActivity extends Activity {
 
     final OrientationSensor sensor = OrientationSensor.getOrientationSensor();
+    Thread imageReceiveAgent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,31 +34,31 @@ public class VRActivity extends Activity {
         final TextView sensorDisplayText = (TextView)findViewById(R.id.test_sensor_data);
         final TextView orientationDisplayText = (TextView)findViewById(R.id.orientation);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.i("Starting Thread: ", Thread.currentThread().getName());
-                while (true) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            orientationDisplayText.setText("\nX: " + sensor.getXDegree() + "\nY: " + sensor.getYDegree() + "\nZ: " + sensor.getZDegree());
-                        }
-                    });
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.i("Starting Thread: ", Thread.currentThread().getName());
+//                while (true) {
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            orientationDisplayText.setText("\nX: " + sensor.getXDegree() + "\nY: " + sensor.getYDegree() + "\nZ: " + sensor.getZDegree());
+//                        }
+//                    });
+//
+//                    try {
+//                        Thread.sleep(10);
+//                    }
+//                    catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }).start();
 
-                    try {
-                        Thread.sleep(10);
-                    }
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-
-        final byte[] data = new byte[5000];
+        final byte[] data = new byte[100000];
         final ImageView image = (ImageView)findViewById(R.id.image);
-        new Thread(new Runnable() {
+        imageReceiveAgent = new Thread(new Runnable() {
             @Override
             public void run() {
                 Log.i("Starting receive:", Thread.currentThread().getName());
@@ -71,12 +72,18 @@ public class VRActivity extends Activity {
                         e.printStackTrace();
                     }
                     Log.i("length received", received.length + "");
-                    Log.i("received", new String(received));
-//                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-//                    image.setImageBitmap(bitmap);
+                    Log.i("received", "image");
+                    final Bitmap bitmap = BitmapFactory.decodeByteArray(received, 0, received.length);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            image.setImageBitmap(bitmap);
+                        }
+                    });
                 }
             }
-        }).start();
+        });
+        imageReceiveAgent.start();
     }
 
     @Override
