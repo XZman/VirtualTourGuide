@@ -58,32 +58,34 @@ public class VRActivity extends Activity {
 
         final byte[] data = new byte[100000];
         final ImageView image = (ImageView)findViewById(R.id.image);
-        imageReceiveAgent = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.i("Starting receive:", Thread.currentThread().getName());
-                while (true) {
-                    byte[] received = null;
-                    try {
-                        received = UDPClient.receiveDatagram(5657, data);
-                    }
-                    catch (Exception e) {
-                        Log.e("receiveException", e.getMessage());
-                        e.printStackTrace();
-                    }
-                    Log.i("length received", received.length + "");
-                    Log.i("received", "image");
-                    final Bitmap bitmap = BitmapFactory.decodeByteArray(received, 0, received.length);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            image.setImageBitmap(bitmap);
+        if (imageReceiveAgent == null) {
+            imageReceiveAgent = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(Thread.currentThread().getName(), "Starting receive image");
+                    while (true) {
+                        byte[] received = null;
+                        try {
+                            received = UDPClient.receiveDatagram(5657, data);
                         }
-                    });
+                        catch (Exception e) {
+                            Log.e("receiveException", e.getMessage());
+                            e.printStackTrace();
+                        }
+                        Log.i("length received", received.length + "");
+                        Log.i("received", "image");
+                        final Bitmap bitmap = BitmapFactory.decodeByteArray(received, 0, received.length);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                image.setImageBitmap(bitmap);
+                            }
+                        });
+                    }
                 }
-            }
-        });
-        imageReceiveAgent.start();
+            });
+            imageReceiveAgent.start();
+        }
     }
 
     @Override

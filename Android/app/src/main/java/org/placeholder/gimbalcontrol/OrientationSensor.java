@@ -67,11 +67,11 @@ public class OrientationSensor {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.i("Starting Thread: ", Thread.currentThread().getName());
+                Log.i(Thread.currentThread().getName(), "Starting sendOrientationData");
                 while(true) {
                     sendOrientationData();
                     try {
-                        Thread.sleep(30);
+                        Thread.sleep(100);
                     }
                     catch (InterruptedException e) {
                         e.printStackTrace();
