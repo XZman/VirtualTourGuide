@@ -1,28 +1,30 @@
 NAME	=	gimbalControl
 SRCS	=	main.cpp \
-			SBGC_pi.cpp \
+			SBGC_mac.cpp \
 			sensor.cpp \
 			SBGC_cmd_helpers.cpp
 OBJS	=	$(SRCS:.cpp=.o)
 
 CC		=	g++
 CFLAGS	=	-c -Wall
-INCLUDE	=	-lwiringPi
+INC		=	-I/tmp/usr/local/include
+LDFLAGS	=	-L/tmp/usr/local/lib
+INCLUDE	=	-lserial
 
 .PHONEY: all clean fclean re
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) -o $(NAME) $(OBJS) $(INCLUDE)
+	$(CC) $(LDFLAGS) -o $(NAME) $(OBJS) $(INCLUDE)
 
 $(OBJS):
-	$(CC) $(CFLAGS) $(SRCS)
+	$(CC) $(CFLAGS) $(INC) $(SRCS)
 
 clean:
-	rm $(OBJS)
+	rm -rf $(OBJS)
 
 fclean: clean
-	rm $(NAME)
+	rm -rf $(NAME)
 
 re: fclean all

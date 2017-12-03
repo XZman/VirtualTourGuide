@@ -1,15 +1,16 @@
-#ifndef SGBC_PI_H
-#define SGBC_PI_H
+#ifndef SGBC_MAC_H
+#define SGBC_MAC_H
 
 #include "SBGC_lib/SBGC.h"
-#include <wiringSerial.h>
+#include "stdint.h"
+#include "serial/serial.h"
 
 void SBGC_setup(char *device);
 
 class PiComObj : public SBGC_ComObj {
-    int fd;
-
-    public:
+private:
+    serial::Serial *srl;
+public:
     void init(char *device, int baud_rate=9600);
 
     virtual uint16_t getBytesAvailable();
