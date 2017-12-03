@@ -92,18 +92,18 @@ public class OrientationSensor {
     private volatile float yOrientation;
     private volatile float zOrientation;
 
-    // unit: degree
+    // unit: ???
     // initial device orientation
     private float initX;
     private float initY;
     private float initZ;
 
-    // unit: radian??
+    // unit: degree
     private volatile float xSpeed;
     private volatile float ySpeed;
     private volatile float zSpeed;
 
-    // unused getters
+    // getters
     public float getXDegree() {
         return xOrientation;
     }
@@ -180,8 +180,10 @@ public class OrientationSensor {
     }
 
     private synchronized void computeSpeed(final float[] values) {
-        xSpeed = (float)(values[0] * 180 / Math.PI);
-        ySpeed = (float)(values[1] * 180 / Math.PI);
-        zSpeed = (float)(values[2] * 180 / Math.PI);
+        float x = (float)(values[0] * 180 / Math.PI);
+        float y = (float)(values[1] * 180 / Math.PI);
+        float z = (float)(values[2] * 180 / Math.PI);
+
+        setSpeed(x, y ,z);
     }
 }
