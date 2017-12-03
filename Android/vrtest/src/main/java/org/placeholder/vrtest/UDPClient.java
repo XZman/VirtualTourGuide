@@ -1,4 +1,4 @@
-package org.placeholder.gimbalcontrol;
+package org.placeholder.vrtest;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -58,16 +58,5 @@ public class UDPClient {
         socket2.receive(packet);
 
         return Arrays.copyOf(data, packet.getLength());
-    }
-
-    public static void getBytesFromFloat(final float value, byte[] bits, final int writePos) throws IllegalArgumentException {
-        if (bits.length - writePos < 0)
-            throw new IllegalArgumentException("arrays length not enough");
-
-        int bytes = Float.floatToIntBits(value);
-        bits[writePos] = (byte)(0xFF & (bytes >> 24));
-        bits[writePos + 1] = (byte)(0xFF & (bytes >> 16));
-        bits[writePos + 2] = (byte)(0xFF & (bytes >> 8));
-        bits[writePos + 3] = (byte)(0xFF & bytes);
     }
 }

@@ -11,6 +11,8 @@ import android.view.Display;
 
 import org.placeholder.activities.R;
 
+import java.util.Arrays;
+
 /**
  * Created by XZman on 19/10/2017.
  */
@@ -38,14 +40,13 @@ public class OrientationSensor {
 
     public synchronized void registerSensor(final Context context) {
         mSensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
-        rotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        // TO-DO: get gyroscope
-        gyroscope = null;
+        rotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
+        gyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         mSensorListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
                 switch (event.sensor.getType()) {
-                    case Sensor.TYPE_ROTATION_VECTOR:
+                    case Sensor.TYPE_GAME_ROTATION_VECTOR:
                         computeOrientation(event.values);
                         break;
                     case Sensor.TYPE_GYROSCOPE:
@@ -62,7 +63,7 @@ public class OrientationSensor {
         };
 
         mSensorManager.registerListener(mSensorListener, rotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        // TO-DO: register listener for gyroscope
+        mSensorManager.registerListener(mSensorListener, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
 
         new Thread(new Runnable() {
             @Override
@@ -83,12 +84,19 @@ public class OrientationSensor {
 
     public void unregisterSensor() {
         mSensorManager.unregisterListener(mSensorListener, rotationSensor);
+        mSensorManager.unregisterListener(mSensorListener, gyroscope);
     }
 
     // unit: degree
     private volatile float xOrientation;
     private volatile float yOrientation;
     private volatile float zOrientation;
+
+    // unit: degree
+    // initial device orientation
+    private float initX;
+    private float initY;
+    private float initZ;
 
     // unit: radian??
     private volatile float xSpeed;
@@ -126,6 +134,12 @@ public class OrientationSensor {
         zOrientation = z;
     }
 
+    private synchronized void setSpeed(final float x, final float y, final float z) {
+        xSpeed = x;
+        ySpeed = y;
+        zSpeed = z;
+    }
+
     @Deprecated
     private static float constrain(final float value) {
         if (value > 180)
@@ -153,17 +167,21 @@ public class OrientationSensor {
     }
 
     private void sendOrientationData() {
-        byte[] orientationByte = {(byte)xOrientation, (byte)yOrientation, (byte)zOrientation};
+        byte[] orientationByte = {(byte)xOrientation, (byte)yOrientation, (byte)zOrientation,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0};
+        UDPClient.getBytesFromFloat(xSpeed, orientationByte, 3);
+        UDPClient.getBytesFromFloat(ySpeed, orientationByte, 7);
+        UDPClient.getBytesFromFloat(zSpeed, orientationByte, 11);
         try {
-            UDPClient.sendDatagram("192.168.4.1", 23333, orientationByte, 500);
+            UDPClient.sendDatagram("192.168.43.136", 23333, orientationByte, 500);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void computeSpeed(final float[] values) {
-        // TO-DO: process data
-        // TO-DO: send data to gimbal
+    private synchronized void computeSpeed(final float[] values) {
+        xSpeed = (float)(values[0] * 180 / Math.PI);
+        ySpeed = (float)(values[1] * 180 / Math.PI);
+        zSpeed = (float)(values[2] * 180 / Math.PI);
     }
 }
