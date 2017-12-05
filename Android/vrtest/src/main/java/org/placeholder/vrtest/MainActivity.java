@@ -1,6 +1,5 @@
 package org.placeholder.vrtest;
 
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 

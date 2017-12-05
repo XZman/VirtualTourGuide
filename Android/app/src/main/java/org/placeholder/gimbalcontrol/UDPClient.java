@@ -70,4 +70,15 @@ public class UDPClient {
         bits[writePos + 2] = (byte)(0xFF & (bytes >> 8));
         bits[writePos + 3] = (byte)(0xFF & bytes);
     }
+
+    public static int getIntFromBytes(byte[] bytes) {
+        if (bytes.length < 4)
+            throw new IllegalArgumentException("arrays length not enough");
+        int result = 0;
+        for (int i = 0; i < 4; i++) {
+            result <<= 8;
+            result |= bytes[i];
+        }
+        return result;
+    }
 }
