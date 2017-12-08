@@ -1,13 +1,8 @@
 package org.placeholder.activities;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -15,10 +10,6 @@ import android.widget.TextView;
 
 import org.placeholder.gimbalcontrol.OrientationSensor;
 import org.placeholder.gimbalcontrol.UDPClient;
-
-import java.net.DatagramSocket;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
 
 public class VRActivity extends Activity {
 
