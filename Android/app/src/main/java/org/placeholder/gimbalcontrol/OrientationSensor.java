@@ -21,6 +21,8 @@ public class OrientationSensor {
 
     private static OrientationSensor instance = null;
 
+    private Thread sendOrientationDataAgent = null;
+
     public static OrientationSensor getOrientationSensor() {
         if (instance == null)
             synchronized (OrientationSensor.class) {
@@ -39,9 +41,10 @@ public class OrientationSensor {
     private SensorEventListener mSensorListener;
 
     public synchronized void registerSensor(final Context context) {
-        mSensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         rotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
         gyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+
         mSensorListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
@@ -65,21 +68,23 @@ public class OrientationSensor {
         mSensorManager.registerListener(mSensorListener, rotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(mSensorListener, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.i(Thread.currentThread().getName(), "Starting sendOrientationData");
-                while(true) {
-                    sendOrientationData();
-                    try {
-                        Thread.sleep(100);
-                    }
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
+        if (sendOrientationDataAgent == null) {
+            sendOrientationDataAgent = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(Thread.currentThread().getName(), "Starting sendOrientationData");
+                    while (true) {
+                        sendOrientationData();
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
-        }).start();
+            });
+            sendOrientationDataAgent.start();
+        }
     }
 
     public void unregisterSensor() {
@@ -155,9 +160,9 @@ public class OrientationSensor {
         float[] orientation = new float[3];
         SensorManager.getOrientation(rotationMatrix, orientation);
 
-        float x = (float)(orientation[0] * 180 / Math.PI + 90);
-        float y = (float)(orientation[1] * 180 / Math.PI + 90);
-        float z = (float)(orientation[2] * 180 / Math.PI + 180);
+        float x = (float) (orientation[0] * 180 / Math.PI + 90);
+        float y = (float) (orientation[1] * 180 / Math.PI + 90);
+        float z = (float) (orientation[2] * 180 / Math.PI + 180);
 
         x = x > 180 ? 180f : x < 0 ? 0f : x;
         // y does not need constrain
@@ -167,23 +172,22 @@ public class OrientationSensor {
     }
 
     private void sendOrientationData() {
-        byte[] orientationByte = {(byte)xOrientation, (byte)yOrientation, (byte)zOrientation,   0, 0, 0, 0,   0, 0, 0, 0,   0, 0, 0, 0};
+        byte[] orientationByte = {(byte) xOrientation, (byte) yOrientation, (byte) zOrientation, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         UDPClient.getBytesFromFloat(xSpeed, orientationByte, 3);
         UDPClient.getBytesFromFloat(ySpeed, orientationByte, 7);
         UDPClient.getBytesFromFloat(zSpeed, orientationByte, 11);
         try {
             UDPClient.sendDatagram("192.168.43.136", 23333, orientationByte, 500);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private synchronized void computeSpeed(final float[] values) {
-        float x = (float)(values[0] * 180 / Math.PI);
-        float y = (float)(values[1] * 180 / Math.PI);
-        float z = (float)(values[2] * 180 / Math.PI);
+        float x = (float) (values[0] * 180 / Math.PI);
+        float y = (float) (values[1] * 180 / Math.PI);
+        float z = (float) (values[2] * 180 / Math.PI);
 
-        setSpeed(x, y ,z);
+        setSpeed(x, y, z);
     }
 }

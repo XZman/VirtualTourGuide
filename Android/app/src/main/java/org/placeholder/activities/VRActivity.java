@@ -1,17 +1,29 @@
 package org.placeholder.activities;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.TextView;
+
+import com.google.vr.sdk.base.Eye;
+import com.google.vr.sdk.base.GvrActivity;
+import com.google.vr.sdk.base.GvrView;
+import com.google.vr.sdk.base.HeadTransform;
+import com.google.vr.sdk.base.Viewport;
 
 import org.placeholder.gimbalcontrol.OrientationSensor;
 import org.placeholder.gimbalcontrol.UDPClient;
 
-public class VRActivity extends Activity {
+import javax.microedition.khronos.egl.EGLConfig;
+
+public class VRActivity extends GvrActivity implements GvrView.StereoRenderer {
+
+    private static final String TAG = "VRActivity";
+
+    private GvrView vrView = null;
+    private ImageView imageViewLeft = null;
+    private ImageView imageViewRight = null;
 
     final OrientationSensor sensor = OrientationSensor.getOrientationSensor();
     Thread imageReceiveAgent;
@@ -22,32 +34,21 @@ public class VRActivity extends Activity {
         setContentView(R.layout.activity_vr);
         sensor.registerSensor(this);
 
-        final TextView sensorDisplayText = (TextView) findViewById(R.id.test_sensor_data);
-        final TextView orientationDisplayText = (TextView) findViewById(R.id.orientation);
+        vrView = (GvrView)findViewById(R.id.gvr_view);
+        vrView.setRenderer(this);
+        setGvrView(vrView);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.i("Starting Thread: ", Thread.currentThread().getName());
-                while (true) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            orientationDisplayText.setText("\nX: " + sensor.getXDegree() + "\nY: " + sensor.getYDegree() + "\nZ: " + sensor.getZDegree());
-                        }
-                    });
+        imageViewLeft = new ImageView(this);
+        imageViewRight = new ImageView(this);
 
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
+        GvrView.LayoutParams layoutParamsLeft = new GvrView.LayoutParams(1920 / 2, 1080);
+        layoutParamsLeft.setMargins(0, 0, 0, 0);
+        vrView.addView(imageViewLeft, layoutParamsLeft);
+        GvrView.LayoutParams layoutParamsRight = new GvrView.LayoutParams(1920 / 2, 1080);
+        layoutParamsRight.setMargins(1920 / 2, 0, 0, 0);
+        vrView.addView(imageViewRight, layoutParamsRight);
 
         final byte[] data = new byte[5001];
-        final ImageView image = (ImageView) findViewById(R.id.image);
         if (imageReceiveAgent == null) {
             imageReceiveAgent = new Thread(new Runnable() {
                 @Override
@@ -60,22 +61,20 @@ public class VRActivity extends Activity {
                             received = UDPClient.receiveDatagram(5657, data);
                             if (received.length == 4) {
                                 int imageBytesSize = UDPClient.getIntFromBytes(received);
-//                                Log.i("received image", "length = " + imageBytesSize);
                                 int packageNum = imageBytesSize % 5000 == 0 ? imageBytesSize / 5000 : (imageBytesSize / 5000 + 1);
 
                                 byte[] imageBytes = new byte[imageBytesSize];
                                 for (int i = 0; i < packageNum; i++) {
                                     received = UDPClient.receiveDatagram(5657, data);
-//                                    Log.i("package #", i + ", length = " + received.length);
-                                    for (int j = 0; j < received.length; j++) {
-                                        imageBytes[i * 5000 + j] = received[j];
-                                    }
+                                    System.arraycopy(received, 0, imageBytes, i * 5000, received.length);
                                 }
                                 final Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        image.setImageBitmap(bitmap);
+                                        imageViewLeft.setImageBitmap(bitmap);
+                                        imageViewRight.setImageBitmap(bitmap);
                                     }
                                 });
                             }
@@ -83,46 +82,7 @@ public class VRActivity extends Activity {
                             Log.e("receiveException", e.getMessage());
                             e.printStackTrace();
                         }
-
                     }
-
-//                    while (true) {
-//                        byte[] imageBytes = null;
-//                        byte[] received = null;
-//                        int length = 0;
-//                        int packageNum = 0;
-//                        int packageCount = 0;
-//                        try {
-//                            received = UDPClient.receiveDatagram(5657, data);
-//                        } catch (Exception e) {
-//                            Log.e("receiveException", e.getMessage());
-//                            e.printStackTrace();
-//                        }
-//                        Log.i("length received", received.length + "");
-//                        if (received.length == 4) {
-//                            length = UDPClient.getIntFromBytes(received);
-//                            Log.i("received", "byte array length = " + length);
-//                            imageBytes = new byte[length];
-//                            packageNum = length / 5000 + 1;
-//                            packageCount = 0;
-//                        } else {
-//                            Log.i("received", "image, length = " + received.length);
-//                            if (packageCount < packageNum) {
-//                                for (int i = 0; i < received.length; i++)
-//                                    imageBytes[i + packageCount * 5000] = received[i];
-//                                packageCount++;
-//                            }
-//                            if (packageCount == packageCount) {
-//                                final Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-//                                runOnUiThread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        image.setImageBitmap(bitmap);
-//                                    }
-//                                });
-//                            }
-//                        }
-//                    }
                 }
             });
             imageReceiveAgent.start();
@@ -139,5 +99,35 @@ public class VRActivity extends Activity {
     protected void onResume() {
         super.onResume();
         sensor.registerSensor(this);
+    }
+
+    @Override
+    public void onNewFrame(HeadTransform headTransform) {
+
+    }
+
+    @Override
+    public void onDrawEye(Eye eye) {
+
+    }
+
+    @Override
+    public void onFinishFrame(Viewport viewport) {
+
+    }
+
+    @Override
+    public void onSurfaceChanged(int i, int i1) {
+
+    }
+
+    @Override
+    public void onSurfaceCreated(EGLConfig eglConfig) {
+
+    }
+
+    @Override
+    public void onRendererShutdown() {
+
     }
 }
