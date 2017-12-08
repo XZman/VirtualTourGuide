@@ -1,5 +1,7 @@
 package org.placeholder.gimbalcontrol;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -77,7 +79,7 @@ public class UDPClient {
         int result = 0;
         for (int i = 0; i < 4; i++) {
             result <<= 8;
-            result |= bytes[i];
+            result |= (bytes[i] & 0xFF);
         }
         return result;
     }

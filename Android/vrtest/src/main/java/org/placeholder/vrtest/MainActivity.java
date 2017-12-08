@@ -16,7 +16,8 @@ public class MainActivity extends GvrActivity implements GvrView.StereoRenderer 
     private static final String TAG = "MainActivity";
 
     private GvrView vrView = null;
-    private ImageView imageView = null;
+    private ImageView imageViewLeft = null;
+    private ImageView imageViewRight = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +28,17 @@ public class MainActivity extends GvrActivity implements GvrView.StereoRenderer 
         vrView.setRenderer(this);
         setGvrView(vrView);
 
-        imageView = new ImageView(this);
-        imageView.setBackgroundResource(R.mipmap.ic_launcher);
+        imageViewLeft = new ImageView(this);
+        imageViewLeft.setBackgroundResource(R.mipmap.ic_launcher);
+        imageViewRight = new ImageView(this);
+        imageViewRight.setBackgroundResource(R.mipmap.ic_launcher);
 
-        GvrView.LayoutParams layoutParams = new GvrView.LayoutParams(1920 / 2, 1080);
-        layoutParams.setMargins(0, 0, 0, 0);
-        vrView.addView(imageView, layoutParams);
+        GvrView.LayoutParams layoutParamsLeft = new GvrView.LayoutParams(1920 / 2, 1080);
+        layoutParamsLeft.setMargins(0, 0, 0, 0);
+        vrView.addView(imageViewLeft, layoutParamsLeft);
+        GvrView.LayoutParams layoutParamsRight = new GvrView.LayoutParams(1920 / 2, 1080);
+        layoutParamsRight.setMargins(1920 / 2, 0, 0, 0);
+        vrView.addView(imageViewRight, layoutParamsRight);
     }
 
     @Override
