@@ -47,7 +47,7 @@ public class VRActivity extends Activity {
             }
         }).start();
 
-        final byte[] data = new byte[100000];
+        final byte[] data = new byte[5001];
         final ImageView image = (ImageView)findViewById(R.id.image);
         if (imageReceiveAgent == null) {
             imageReceiveAgent = new Thread(new Runnable() {
@@ -64,7 +64,9 @@ public class VRActivity extends Activity {
                             e.printStackTrace();
                         }
                         Log.i("length received", received.length + "");
-                        Log.i("received", "image");
+                        if (received.length == 4) {
+                            Log.i("received", "length = ");
+                        }
                         final Bitmap bitmap = BitmapFactory.decodeByteArray(received, 0, received.length);
                         runOnUiThread(new Runnable() {
                             @Override

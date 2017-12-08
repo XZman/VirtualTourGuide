@@ -4,9 +4,25 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <string.h>
 #include <inttypes.h>
 
 typedef struct sockaddr_in sin;
+
+float btof(uint8_t *st) {
+    unsigned long tmp = 0;
+    float rs;
+
+    for (int i=0;i<4;i++) {
+        tmp = tmp << 8;
+        tmp += *st;
+        st++;
+    }
+    char *pul = (char *)&tmp;
+    char *pf = (char *)&rs;
+    memcpy(pf, pul, sizeof(float));
+    return rs;
+}
 
 Sensor::Sensor(int port) {
     if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -32,9 +48,15 @@ Sensor::~Sensor() {
     delete this;
 }
 
-void Sensor::getAngle(Angle &a) {
-    int recvlen = recv(fd, buf, BUFFSIZE, 0);
-    a.x = buf[0];
-    a.y = buf[1];
-    a.z = buf[2];
+bool Sensor::getAngle(Angle &a) {
+    int recvlen = recv(fd, buf, BUFFSIZE, MSG_DONTWAIT);
+    if (recvlen != 15)
+        return false;
+    a.x = buf[0] - 90;
+    a.y = buf[1] - 90;
+    a.z = buf[2] - 90;
+    a.speed_x = btof(buf+3);
+    a.speed_y = btof(buf+7);
+    a.speed_z = btof(buf+11);
+    return true;
 }

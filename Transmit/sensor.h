@@ -11,7 +11,12 @@ struct Angle {
     uint8_t x;
     uint8_t y;
     uint8_t z;
+    float   speed_x;
+    float   speed_y;
+    float   speed_z;
 };
+
+float btof(uint8_t *st);
 
 class Sensor {
 private:
@@ -22,7 +27,7 @@ public:
     Sensor(int port=23333);
     ~Sensor();
 
-    void getAngle(Angle &a);
+    bool getAngle(Angle &a);
 };
 
 #endif
