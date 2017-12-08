@@ -10,9 +10,8 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="32a5fcba-d09d-4fe7-bf37-670088b47a3e" name="Default" comment="">
+    <list default="true" id="32a5fcba-d09d-4fe7-bf37-670088b47a3e" name="Default" comment="fuck GVR SDK">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vrtest/src/main/java/org/placeholder/vrtest/MainActivity.java" afterPath="$PROJECT_DIR$/vrtest/src/main/java/org/placeholder/vrtest/MainActivity.java" />
     </list>
     <ignored path="Android.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -3310,7 +3309,14 @@
       <option name="project" value="LOCAL" />
       <updated>1512697310170</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="fuck GVR SDK">
+      <created>1512697350150</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1512697350150</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -3323,10 +3329,10 @@
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3450156" sideWeight="0.5187166" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32788163" sideWeight="0.50953895" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298887" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32862523" sideWeight="0.49197862" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32788163" sideWeight="0.49046105" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27118644" sideWeight="0.4973262" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29828662" sideWeight="0.7364865" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -3398,13 +3404,10 @@
         <state relative-caret-position="465">
           <caret line="45" column="21" lean-forward="false" selection-start-line="45" selection-start-column="21" selection-end-line="45" selection-end-column="21" />
           <folding>
-            <element signature="imports" expanded="false" />
             <element signature="e#912#1678#0" expanded="false" />
             <element signature="e#1126#1423#0" expanded="false" />
             <element signature="e#1422#1423#0" expanded="false" />
             <element signature="e#1677#1678#0" expanded="false" />
-            <element signature="e#1889#3009#0" expanded="false" />
-            <element signature="e#3008#3009#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -3469,13 +3472,10 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="false" />
             <element signature="e#912#1678#0" expanded="false" />
             <element signature="e#1126#1423#0" expanded="false" />
             <element signature="e#1422#1423#0" expanded="false" />
             <element signature="e#1677#1678#0" expanded="false" />
-            <element signature="e#1889#3009#0" expanded="false" />
-            <element signature="e#3008#3009#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -3540,13 +3540,10 @@
         <state relative-caret-position="240">
           <caret line="30" column="79" lean-forward="false" selection-start-line="30" selection-start-column="79" selection-end-line="30" selection-end-column="79" />
           <folding>
-            <element signature="imports" expanded="false" />
             <element signature="e#912#1678#0" expanded="false" />
             <element signature="e#1126#1423#0" expanded="false" />
             <element signature="e#1422#1423#0" expanded="false" />
             <element signature="e#1677#1678#0" expanded="false" />
-            <element signature="e#1889#3009#0" expanded="false" />
-            <element signature="e#3008#3009#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -3656,13 +3653,10 @@
         <state relative-caret-position="971">
           <caret line="78" column="9" lean-forward="false" selection-start-line="78" selection-start-column="9" selection-end-line="78" selection-end-column="9" />
           <folding>
-            <element signature="imports" expanded="false" />
             <element signature="e#912#1678#0" expanded="false" />
             <element signature="e#1126#1423#0" expanded="false" />
             <element signature="e#1422#1423#0" expanded="false" />
             <element signature="e#1677#1678#0" expanded="false" />
-            <element signature="e#1889#3009#0" expanded="false" />
-            <element signature="e#3008#3009#0" expanded="false" />
           </folding>
         </state>
       </provider>
