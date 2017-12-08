@@ -51,7 +51,7 @@ public class MainActivity extends GvrActivity implements GvrView.StereoRenderer 
 
     @Override
     public void onDrawEye(Eye eye) {
-        
+
     }
 
     @Override
