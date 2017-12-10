@@ -46,10 +46,16 @@ public class OrientationSensor {
         gyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
         mSensorListener = new SensorEventListener() {
+            private boolean isStartup = true;
+
             @Override
             public void onSensorChanged(SensorEvent event) {
                 switch (event.sensor.getType()) {
                     case Sensor.TYPE_GAME_ROTATION_VECTOR:
+                        if (isStartup) {
+                            setInitialOrientation(event.values);
+                            isStartup = false;
+                        }
                         computeOrientation(event.values);
                         break;
                     case Sensor.TYPE_GYROSCOPE:
@@ -76,7 +82,7 @@ public class OrientationSensor {
                     while (true) {
                         sendOrientationData();
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(30);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -97,7 +103,7 @@ public class OrientationSensor {
     private volatile float yOrientation;
     private volatile float zOrientation;
 
-    // unit: ???
+    // unit: radian
     // initial device orientation
     private float initX;
     private float initY;
@@ -137,6 +143,8 @@ public class OrientationSensor {
         xOrientation = x;
         yOrientation = y;
         zOrientation = z;
+
+        Log.i("setOrientation", x + ", " + y + ", " + z);
     }
 
     private synchronized void setSpeed(final float x, final float y, final float z) {
@@ -154,16 +162,36 @@ public class OrientationSensor {
         return value;
     }
 
+    private void setInitialOrientation(final float[] values) {
+        float[] rotationMatrix = new float[9];
+        SensorManager.getRotationMatrixFromVector(rotationMatrix, values);
+        float[] orientation = new float[3];
+        SensorManager.getOrientation(rotationMatrix, orientation);
+
+        initX = orientation[0];
+        initY = orientation[1];
+        initZ = orientation[2];
+
+        Log.i("setInitOrientation", initX + ", " + initY + ", " + initZ);
+    }
+
     private synchronized void computeOrientation(final float[] values) {
         float[] rotationMatrix = new float[9];
         SensorManager.getRotationMatrixFromVector(rotationMatrix, values);
         float[] orientation = new float[3];
         SensorManager.getOrientation(rotationMatrix, orientation);
 
-        float x = (float) (orientation[0] * 180 / Math.PI + 90);
+//        float x = (float) ((orientation[0] - initX) * 180 / Math.PI + 90);
+
+        float x = (float) (orientation[0] - initX);
+        if (x > Math.PI)
+            x -= 2 * Math.PI;
+
+        x = (float) (x * 180 / Math.PI + 90);
         float y = (float) (orientation[1] * 180 / Math.PI + 90);
         float z = (float) (orientation[2] * 180 / Math.PI + 180);
 
+        Log.i("computeOrientation", x + ", " + y + ", " + z);
         x = x > 180 ? 180f : x < 0 ? 0f : x;
         // y does not need constrain
         z = z > 270 ? 0f : z > 180 ? 180f : z;
@@ -177,7 +205,7 @@ public class OrientationSensor {
         UDPClient.getBytesFromFloat(ySpeed, orientationByte, 7);
         UDPClient.getBytesFromFloat(zSpeed, orientationByte, 11);
         try {
-            UDPClient.sendDatagram("192.168.43.136", 23333, orientationByte, 500);
+            UDPClient.sendDatagram("192.168.1.118", 23333, orientationByte, 500);
         } catch (Exception e) {
             e.printStackTrace();
         }
