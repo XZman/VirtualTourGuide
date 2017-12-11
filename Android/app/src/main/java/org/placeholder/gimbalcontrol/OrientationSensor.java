@@ -80,8 +80,8 @@ public class OrientationSensor {
                 public void run() {
                     Log.i(Thread.currentThread().getName(), "Starting sendOrientationData");
                     while (true) {
-                        if (checkOrientationValidity())
-                            sendOrientationData();
+//                        if (checkOrientationValidity())
+                        sendOrientationData();
                         try {
                             Thread.sleep(30);
                         } catch (InterruptedException e) {
