@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
+    private static final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +44,7 @@ public class MainActivity extends Activity {
 
             // for fun poi
             case R.id.activity_main_menu_poi:
-                AlertPoi();
+                alertPoi();
                 return true;
 
             default:
@@ -51,7 +53,7 @@ public class MainActivity extends Activity {
     }
 
     // for fun poi
-    private void AlertPoi() {
+    private void alertPoi() {
         new AlertDialog.Builder(this)
                 .setMessage("Poi!")
                 .setTitle("Poi?")
