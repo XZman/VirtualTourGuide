@@ -80,7 +80,8 @@ public class OrientationSensor {
                 public void run() {
                     Log.i(Thread.currentThread().getName(), "Starting sendOrientationData");
                     while (true) {
-                        sendOrientationData();
+                        if (checkOrientationValidity())
+                            sendOrientationData();
                         try {
                             Thread.sleep(30);
                         } catch (InterruptedException e) {
@@ -144,7 +145,7 @@ public class OrientationSensor {
         yOrientation = y;
         zOrientation = z;
 
-        Log.i("setOrientation", x + ", " + y + ", " + z);
+//        Log.i("setOrientation", x + ", " + y + ", " + z);
     }
 
     private synchronized void setSpeed(final float x, final float y, final float z) {
@@ -191,12 +192,25 @@ public class OrientationSensor {
         float y = (float) (orientation[1] * 180 / Math.PI + 90);
         float z = (float) (orientation[2] * 180 / Math.PI + 180);
 
-        Log.i("computeOrientation", x + ", " + y + ", " + z);
+//        Log.i("computeOrient ation", x + ", " + y + ", " + z);
         x = x > 180 ? 180f : x < 0 ? 0f : x;
-        // y does not need constrain
+//        // y does not need constrain
         z = z > 270 ? 0f : z > 180 ? 180f : z;
 
+//        // constrain x, y, and z to [45, 135]
+//        x = x > 135 ? 135f : x < 45 ? 45f : x;
+//        y = y > 135 ? 135f : y < 45 ? 45f : y;
+//        z = z > 135 ? 135f : z < 45 ? 45f : z;
+
         setOrientation(x, y, z);
+    }
+
+    private boolean checkOrientationValidity() {
+        return checkOrienValidityHelper(xOrientation) && checkOrienValidityHelper(yOrientation) && checkOrienValidityHelper(zOrientation);
+    }
+
+    private boolean checkOrienValidityHelper(float orien) {
+        return orien >= 45 && orien <= 135;
     }
 
     private void sendOrientationData() {
@@ -209,6 +223,7 @@ public class OrientationSensor {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Log.i("sent", xOrientation + ", " + yOrientation + ", " + zOrientation);
     }
 
     private synchronized void computeSpeed(final float[] values) {
