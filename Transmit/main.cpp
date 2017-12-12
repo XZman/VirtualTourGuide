@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <iostream>
 #include <unistd.h>
+#include <ctime>
 
 SBGC_Parser sbgc_parser;
 PiComObj    pi_obj;
@@ -24,7 +25,7 @@ int main(int argc, char *argv[]) {
     Sensor *s = new Sensor();
     if (s==NULL)
         return 0;
-    while (true) {
+    for (int i = 0; i < 128; i++) {
         if(!s->getAngle(a))
             continue;
         //a.x = 0;
@@ -37,7 +38,7 @@ int main(int argc, char *argv[]) {
         c.speedPITCH    =   a.speed_z * SBGC_SPEED_SCALE;
         c.speedROLL     =   a.speed_y * SBGC_SPEED_SCALE;
         c.speedPITCH    =   a.speed_x * SBGC_SPEED_SCALE;
-        SBGC_cmd_control_send(c, sbgc_parser);
+        printf("return val: %u \n",SBGC_cmd_control_send(c, sbgc_parser));
         printf("command sent\n");
         //usleep(400 * 1000);
     }

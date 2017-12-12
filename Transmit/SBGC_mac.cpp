@@ -13,12 +13,14 @@ uint16_t PiComObj::getBytesAvailable() {
 }
 
 uint8_t PiComObj::readByte() {
-    std::string str = srl->read();
-    uint8_t rs = str[0];
+    uint8_t rs;
+    srl->read(&rs,1);
     return (uint8_t)rs;
 }
 
 void PiComObj::writeByte(uint8_t b) {
-    srl->write(&b, 1);
+    uint8_t *rs = new uint8_t;
+    *rs = b;
+    srl->write(rs, 1);
 }
 
