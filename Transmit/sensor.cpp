@@ -48,15 +48,29 @@ Sensor::~Sensor() {
     delete this;
 }
 
+void clip(uint8_t &ang, float &sp) {
+    if (ang < 45) {
+        ang = 45;
+        sp = 0;
+    }
+    if (ang > 135) {
+        ang = 135;
+        sp = 0;
+    }
+}
+
 bool Sensor::getAngle(Angle &a) {
-    int recvlen = recv(fd, buf, BUFFSIZE, MSG_DONTWAIT);
+    int recvlen = recv(fd, buf, BUFFSIZE, 0);
     if (recvlen != 15)
         return false;
-    a.x = buf[0] - 90;
-    a.y = buf[1] - 90;
-    a.z = buf[2] - 90;
     a.speed_x = btof(buf+3);
     a.speed_y = btof(buf+7);
     a.speed_z = btof(buf+11);
+    clip(buf[0], a.speed_x);
+    clip(buf[1], a.speed_y);
+    clip(buf[2], a.speed_z);
+    a.x = buf[0] - 90;
+    a.y = buf[1] - 90;
+    a.z = buf[2] - 90;
     return true;
 }
