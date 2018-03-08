@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
                 // TO-DO: start AboutActivity
                 return true;
             case R.id.activity_main_menu_setting:
-                // TO-DO: start SettingActivity
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
 
             // for fun poi

@@ -1,8 +1,10 @@
 package org.placeholder.activities;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -48,6 +50,9 @@ public class VRActivity extends GvrActivity implements GvrView.StereoRenderer {
         layoutParamsRight.setMargins(1920 / 2, 0, 0, 0);
         vrView.addView(imageViewRight, layoutParamsRight);
 
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        final int port = Integer.parseInt(sharedPref.getString("CAMERA_PORT", "-1"));
+        Log.i("video", "camera port: " + port + "\n");
         final byte[] data = new byte[5001];
         if (imageReceiveAgent == null) {
             imageReceiveAgent = new Thread(new Runnable() {
@@ -58,27 +63,33 @@ public class VRActivity extends GvrActivity implements GvrView.StereoRenderer {
                     while (true) {
                         byte[] received = null;
                         try {
-                            received = UDPClient.receiveDatagram(5657, data);
+                            received = UDPClient.receiveDatagram(port, data);
+                            Log.i("video", "received length: " + received.length + "\n");
                             if (received.length == 4) {
                                 int imageBytesSize = UDPClient.getIntFromBytes(received);
                                 int packageNum = imageBytesSize % 5000 == 0 ? imageBytesSize / 5000 : (imageBytesSize / 5000 + 1);
 
+                                int checkPackageSize = 0;
                                 byte[] imageBytes = new byte[imageBytesSize];
                                 for (int i = 0; i < packageNum; i++) {
-                                    received = UDPClient.receiveDatagram(5657, data);
+                                    received = UDPClient.receiveDatagram(port, data);
+                                    checkPackageSize += received.length;
                                     System.arraycopy(received, 0, imageBytes, i * 5000, received.length);
                                 }
-                                final Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                                if (Math.abs(checkPackageSize - imageBytesSize) <= 0) {
+                                    final Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
 
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        imageViewLeft.setImageBitmap(bitmap);
-                                        imageViewRight.setImageBitmap(bitmap);
-                                    }
-                                });
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            imageViewLeft.setImageBitmap(bitmap);
+                                            imageViewRight.setImageBitmap(bitmap);
+                                        }
+                                    });
+                                }
                             }
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             Log.e("receiveException", e.getMessage());
                             e.printStackTrace();
                         }

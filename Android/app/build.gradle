@@ -21,6 +21,7 @@ android {
 
 dependencies {
     //compile 'de.mrmaffen:libvlc-android:2.1.12@aar'
+    implementation 'com.android.support:support-v4:25.4.0'
     compile 'com.google.vr:sdk-base:1.80.0'
     //compile 'com.google.vr:sdk-audio:1.80.0'
 

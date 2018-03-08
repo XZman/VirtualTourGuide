@@ -3,7 +3,7 @@
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="org.placeholder.activities.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -19,11 +19,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.placeholder.activities.VRActivity"
-            android:screenOrientation="landscape"
+            android:name=".VRActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:resizeableActivity="false">
-
+            android:resizeableActivity="false"
+            android:screenOrientation="landscape">
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings">
         </activity>
     </application>
 

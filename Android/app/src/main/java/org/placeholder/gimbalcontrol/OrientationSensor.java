@@ -1,23 +1,21 @@
 package org.placeholder.gimbalcontrol;
 
 import android.content.Context;
-import android.content.res.Resources;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Display;
-
-import org.placeholder.activities.R;
-
-import java.util.Arrays;
 
 /**
  * Created by XZman on 19/10/2017.
  */
 
 public class OrientationSensor {
+
+    private Context myContext = null;
 
     private static OrientationSensor instance = null;
 
@@ -41,6 +39,8 @@ public class OrientationSensor {
     private SensorEventListener mSensorListener;
 
     public synchronized void registerSensor(final Context context) {
+        myContext = context;
+
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         rotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
         gyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -74,6 +74,8 @@ public class OrientationSensor {
         mSensorManager.registerListener(mSensorListener, rotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(mSensorListener, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
 
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(myContext);
+        final int sendRate = Integer.parseInt(sharedPref.getString("GIMBAL_SEND_RATE", "30"));
         if (sendOrientationDataAgent == null) {
             sendOrientationDataAgent = new Thread(new Runnable() {
                 @Override
@@ -83,7 +85,7 @@ public class OrientationSensor {
 //                        if (checkOrientationValidity())
                         sendOrientationData();
                         try {
-                            Thread.sleep(30);
+                            Thread.sleep(sendRate);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -218,12 +220,16 @@ public class OrientationSensor {
         UDPClient.getBytesFromFloat(xSpeed, orientationByte, 3);
         UDPClient.getBytesFromFloat(ySpeed, orientationByte, 7);
         UDPClient.getBytesFromFloat(zSpeed, orientationByte, 11);
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(myContext);
+        final String ip = sharedPref.getString("GIMBAL_IP_ADDRESS", "0.0.0.0");
+        final int port = Integer.parseInt(sharedPref.getString("GIMBAL_PORT", "-1"));
         try {
-            UDPClient.sendDatagram("192.168.1.118", 23333, orientationByte, 500);
+            UDPClient.sendDatagram(ip, port, orientationByte, 500);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.i("sent", xOrientation + ", " + yOrientation + ", " + zOrientation);
+//        Log.i("sent", xOrientation + ", " + yOrientation + ", " + zOrientation);
     }
 
     private synchronized void computeSpeed(final float[] values) {
